@@ -1,6 +1,6 @@
 <template>
     <div class="painting">
-
+      
       <vPopup 
         v-if="popupVisible"
         :popupName="card_data.name"
@@ -16,63 +16,84 @@
         <p class="popup__price" v-if="card_data.sale == ''"> {{ card_data.price }} </p>
         <p class="popup__price" v-if="card_data.sale !== ''"> {{ card_data.sale }} </p>
       </vPopup>
-
-      <img class="painting__img" :src=" require('../assets/' + card_data.img) " alt="img" @click="showPopup">
-      <div class="painting__content">
-        <h3 class="painting__content-text" @click="showPopup">{{ card_data.name }}</h3>
-        <div class="painting__box">
-          <div class="painting__box-text">
-            <p class="painting__box-price"> {{ card_data.price }} </p>
-            <p class="painting__box-sale" v-if="card_data.sale !== ''"> {{ card_data.sale }} </p>
+        <img :class="{painting__img, none}" :src=" require('../assets/' + card_data.img) " alt="img" @click="showPopup">
+        <div class="painting__content">
+          <h3 class="painting__content-text" @click="showPopup">{{ card_data.name }}</h3>
+          <div class="painting__box">
+            <div class="painting__box-text">
+              <p class="painting__box-price"> {{ card_data.price }} </p>
+              <p class="painting__box-sale" v-if="card_data.sale !== ''"> {{ card_data.sale }} </p>
+            </div>
+            <button  
+            v-if="card_data.store == true" 
+            @click="addToBasket"
+            :class="{button, buttonCard, loader}"
+            >
+            {{ title }}
+          </button>
           </div>
-          <button  
-          v-if="card_data.store == true" 
-          @click="addToBasket"
-          :class="className"
-          >
-          {{ title }}</button>
         </div>
-      </div>
     </div>
   </template>
   
   <script>
   import vPopup from './popup.vue'
+  
 
   export default {
-    name: 'vCard',
+    name: 'vCard', 
     components: {
       vPopup,
     },
     methods: {
       addToBasket() {
-       this.className.buttonCard = true
-       this.title = 'В корзине'
+        setTimeout(() => 
+        this.loader = true,
+        this.title = '')
+
+        setTimeout(() => {
+          this.buttonCard = true
+          this.title = 'В корзине'
+          this.loader = false
+        },2000)
+        
+        this.cardId.unshift(this.card_data.id)
+        localStorage.setItem('id', JSON.stringify(this.cardId))
       },
       showPopup() {
         this.popupVisible = true
       },
       closePopup() {
         this.popupVisible = false
+      },
+      met () {
       }
     },
-    computed: {},
+    computed: {
+    },
     props: {
       card_data: {
-            type: Object,
-            default() {
-                return {}
-            }
+          type: Object,
+          default() {
+              return {}
+          }
         }
+    },
+    mounted() {
+     if (this.card_data.store == false) {
+      this.none = true
+     }
     },
     data() {
       return {
-        className: {
-          button: true,
-          buttonCard: false,
-        },
+        painting: true,
+        none: false,
+        loader: false,
+        button: true,
+        buttonCard: false,
         popupVisible: false,
-        title: 'Купить'
+        title: 'Купить',
+        cardId: []
       }
     },
   }
@@ -130,9 +151,16 @@
             line-height: 150%;
             text-align: left;
             color: #343030;
-            margin: 15px 0 0 24px;
+            margin: 15px 0 0 0;
+            width: 220px;
             }
         }
+        &__img {
+          width: 100%;
+        }
+    }
+    .none {
+      opacity: .3;
     }
     .button {
         width: 118px;
@@ -148,13 +176,8 @@
         justify-content: center;
         color: #F4F6F9;
         border-radius: 5px;
-        transition: background-color 1s;
-        &__loading {
-            display: inline;    
-        }
-    }
-    .button:hover {
-      background: #776763;
+        cursor: pointer;
+        
     }
     .buttonCard {
       background: #5B3A32;
@@ -163,6 +186,23 @@
       background-position: 15% 50%;
       background-size: 15px 15px;
       padding-left: 15px;
+    }
+    .loader {
+      pointer-events: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: #ffffff;
+      animation: an1 1s ease infinite;
+    }
+    @keyframes an1 {
+      0% {
+        transform: rotate(0turn);
+      }
+      100% {
+        transform: rotate(1turn);
+      }
     }
   </style>
   

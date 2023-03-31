@@ -5,7 +5,7 @@
     </div>
     <div class="testTask__content">
       <vCard  
-        v-for="product in productsState"
+        v-for="product in filterProduct"
         :key="product.name"
         :card_data="product"/>
     </div>
@@ -21,11 +21,19 @@ export default {
   components: {
     vCard
   },
+  data() {
+    return {
+      newSortArr: []
+    }
+  },
   methods: {
     ...mapActions([
       'productsGet',
       'getSearchName'
-    ])
+    ]),
+    pushLocalStorage() {
+      localStorage.setItem('id', JSON.stringify(this.cardId));
+    }
   },
   computed: {
     ...mapGetters([
@@ -33,19 +41,14 @@ export default {
       'searchItemName'
     ]),
     filterProduct() {
-      return this.productsState.filter(function (elem) {
-        return elem.name.includes(this.searchItemName)
+      return this.productsState.filter( (elem) => {
+        return elem.name.includes(this.searchItemName) 
       })
-      
     }
   },
   mounted () {
     this.productsGet()
-  },
-  data() {
-    return {
-    }
-  },
+  }
 }
 </script>
 
@@ -55,7 +58,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    margin: 0 0 80px 100px;
+    margin: 0 0 75px 100px;
     &__top {
       margin: 45px 0 45px 0;
         &-text {

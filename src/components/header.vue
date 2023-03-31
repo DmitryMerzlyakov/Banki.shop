@@ -36,6 +36,7 @@ export default {
     ]),
     search(value) {
       this.getSearchName(value)
+
     }
   },
   data () {
@@ -53,8 +54,7 @@ export default {
       display: flex;
       justify-content: space-evenly;
       align-items: stretch;
-      padding: 37px;
-      height: 48px;
+      padding: 37px 0 37px 0;
       &__link {
         display: flex;
         gap: 48px;
@@ -81,7 +81,6 @@ export default {
             line-height: 150%;
             display: flex;
             align-items: center;
-            color: #9F9F9F;
             :hover {
               color: #343030;
             }

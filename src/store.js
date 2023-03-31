@@ -16,7 +16,7 @@ let store = new Vuex.Store({
         getSearch: (state, value) => {
             state.searchName = value
         }
-        },
+    },
     actions: {
         productsGet({commit}) {
            return axios ('http://localhost:3000/products', {
@@ -39,7 +39,6 @@ let store = new Vuex.Store({
             return state.searchName
         }
     }
-
 })
 
 export default store
