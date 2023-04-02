@@ -3,33 +3,33 @@
       
       <vPopup 
         v-if="popupVisible"
-        :popupName="card_data.name"
+        :popupName="thisProduct.name"
         @closePopup="closePopup"
       >
         <div class="popup__img">
-          <img class="popup__img-item" :src=" require('../assets/' + card_data.img) " alt="img">
-          <img class="popup__img-item" :src=" require('../assets/' + card_data.imgOne) " alt="img">
-          <img class="popup__img-item" :src=" require('../assets/' + card_data.imgTwo) " alt="img">
-          <img class="popup__img-item" :src=" require('../assets/' + card_data.imgThree) " alt="img">
+          <img class="popup__img-item" :src=" require('../assets/' + thisProduct.img) " alt="img">
+          <img class="popup__img-item" :src=" require('../assets/' + thisProduct.imgOne) " alt="img">
+          <img class="popup__img-item" :src=" require('../assets/' + thisProduct.imgTwo) " alt="img">
+          <img class="popup__img-item" :src=" require('../assets/' + thisProduct.imgThree) " alt="img">
         </div>
-        <p class="painting__content-text">{{ card_data.discription }}</p>
-        <p class="popup__price" v-if="card_data.sale == ''"> {{ card_data.price }} </p>
-        <p class="popup__price" v-if="card_data.sale !== ''"> {{ card_data.sale }} </p>
+        <p class="painting__content-text">{{ thisProduct.discription }}</p>
+        <p class="popup__price" v-if="thisProduct.sale == ''"> {{ thisProduct.price }} </p>
+        <p class="popup__price" v-if="thisProduct.sale !== ''"> {{ thisProduct.sale }} </p>
       </vPopup>
-        <img :class="{painting__img, none}" :src=" require('../assets/' + card_data.img) " alt="img" @click="showPopup">
+        <img :class="{painting__img, none}" :src=" require('../assets/' + thisProduct.img) " alt="img" @click="showPopup">
         <div class="painting__content">
-          <h3 class="painting__content-text" @click="showPopup">{{ card_data.name }}</h3>
+          <h3 class="painting__content-text" @click="showPopup">{{ thisProduct.name }}</h3>
           <div class="painting__box">
             <div class="painting__box-text">
-              <p class="painting__box-price"> {{ card_data.price }} </p>
-              <p class="painting__box-sale" v-if="card_data.sale !== ''"> {{ card_data.sale }} </p>
+              <p class="painting__box-price"> {{ thisProduct.price }} </p>
+              <p class="painting__box-sale" v-if="thisProduct.sale !== ''"> {{ thisProduct.sale }} </p>
             </div>
             <button  
-            v-if="card_data.store == true" 
+            v-if="thisProduct.store == true" 
             @click="addToBasket"
             :class="{button, buttonCard, loader}"
             >
-            {{ title }}
+            {{ buttonTitle }}
           </button>
           </div>
         </div>
@@ -37,13 +37,28 @@
   </template>
   
   <script>
-  import vPopup from './popup.vue'
-  
 
-  export default {
+import vPopup from './popup.vue'
+import { mapGetters } from 'vuex'
+
+    export default {
     name: 'vCard', 
     components: {
       vPopup,
+    },
+    computed: {
+      ...mapGetters([
+        'inBasket'
+      ]),
+      /* eslint-disable */
+      buttonTitle() {
+        if (this.inBasket(this.thisProduct.id) ) {
+          this.buttonCard = true
+          return 'В корзине'
+        } else { 
+          return 'Купить'
+        }
+      }
     },
     methods: {
       addToBasket() {
@@ -53,26 +68,21 @@
 
         setTimeout(() => {
           this.buttonCard = true
-          this.title = 'В корзине'
           this.loader = false
         },2000)
-        
-        this.cardId.unshift(this.card_data.id)
-        localStorage.setItem('id', JSON.stringify(this.cardId))
+
+        this.$emit('toBasket',this.thisProduct)
+       
       },
       showPopup() {
         this.popupVisible = true
       },
       closePopup() {
         this.popupVisible = false
-      },
-      met () {
       }
     },
-    computed: {
-    },
     props: {
-      card_data: {
+      thisProduct: {
           type: Object,
           default() {
               return {}
@@ -80,10 +90,11 @@
         }
     },
     mounted() {
-     if (this.card_data.store == false) {
+     if (this.thisProduct.store == false) {
       this.none = true
      }
     },
+
     data() {
       return {
         painting: true,
@@ -92,10 +103,9 @@
         button: true,
         buttonCard: false,
         popupVisible: false,
-        title: 'Купить',
-        cardId: []
+        title: 'Купить'
       }
-    },
+    }
   }
   </script>
   

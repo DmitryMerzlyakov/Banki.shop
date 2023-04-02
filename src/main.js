@@ -3,7 +3,7 @@ import App from './App.vue'
 import store from './store.js'
 
 Vue.config.productionTip = false
-store.dispatch
+
 
 new Vue({
   render: h => h(App),

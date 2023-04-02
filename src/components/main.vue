@@ -5,9 +5,12 @@
     </div>
     <div class="testTask__content">
       <vCard  
+        
         v-for="product in filterProduct"
         :key="product.name"
-        :card_data="product"/>
+        :thisProduct="product"
+        @toBasket="toBasket"
+        />
     </div>
   </div>
 </template>
@@ -23,22 +26,25 @@ export default {
   },
   data() {
     return {
-      newSortArr: []
     }
   },
   methods: {
     ...mapActions([
       'productsGet',
-      'getSearchName'
+      'getSearchName',
+      'basketPush',
+      'loadBasket'
     ]),
-    pushLocalStorage() {
-      localStorage.setItem('id', JSON.stringify(this.cardId));
+    toBasket(data) {
+        this.basketPush(data)
+      
     }
   },
   computed: {
     ...mapGetters([
       'productsState',
-      'searchItemName'
+      'searchItemName',
+      'basketState'
     ]),
     filterProduct() {
       return this.productsState.filter( (elem) => {
@@ -46,9 +52,17 @@ export default {
       })
     }
   },
-  mounted () {
-    this.productsGet()
-  }
+  async mounted () {
+       await this.productsGet()
+       this.loadBasket()
+      // if (localStorage.getItem('id')) {
+      //   this.id = JSON.parse(localStorage.getItem('id'))
+      // } 
+      // console.log(this.id);
+  },
+  // created () {
+  //   this.loadBasket()
+  // }
 }
 </script>
 
